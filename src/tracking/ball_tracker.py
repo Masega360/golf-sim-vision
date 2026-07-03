@@ -68,9 +68,10 @@ class BallTracker(ITracker):
                         self._finalize_shot(timestamp)
 
             case TrackingState.SHOT_COMPLETE:
-                # Resetear para el próximo shot
+                # Resetear para el próximo shot, registrar tiempo para cooldown
                 self._state = TrackingState.IDLE
                 self._shot_positions = []
+                self._last_shot_time = timestamp
 
         return self._state
 
@@ -105,7 +106,10 @@ class BallTracker(ITracker):
         self._last_shot_time = end_time
 
     def get_shot_data(self) -> ShotData | None:
-        return self._last_shot
+        """Retorna los datos del último shot y los limpia (solo se consume una vez)."""
+        shot = self._last_shot
+        self._last_shot = None
+        return shot
 
     def get_trail(self) -> list[TrackedPosition]:
         return list(self._trail)

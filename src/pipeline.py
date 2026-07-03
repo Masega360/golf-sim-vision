@@ -131,6 +131,9 @@ class GolfSimPipeline(IPipeline):
             ))
             self._display.show_shot_result(result)
 
+        # Resetear detector para limpiar el modelo de fondo post-shot
+        self._detection.reset()
+
     def should_stop(self) -> bool:
         return not self._running
 
