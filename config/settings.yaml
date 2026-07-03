@@ -19,8 +19,8 @@ detection:
   median_blur_size: 5         # Tamaño del kernel (debe ser impar)
   
   # Filtro de área para contornos
-  min_area: 50                # Área mínima en px² (debajo = ruido)
-  max_area: 1500              # Área máxima en px² (arriba = no es pelota)
+  min_area: 30                # Área mínima en px² (pelota chica a distancia)
+  max_area: 800               # Área máxima en px² (pelota grande de cerca, rechaza palo/cuerpo)
 
 tracking:
   min_movement_px: 10.0       # Píxeles mínimos para considerar que empezó un shot

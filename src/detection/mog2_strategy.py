@@ -48,7 +48,13 @@ class MOG2DetectionStrategy(IDetectionStrategy):
         return DetectionOutput(detection=best, mask=mask)
 
     def _select_best_candidate(self, contours) -> DetectionResult | None:
-        """Selecciona el contorno más probable de ser la pelota."""
+        """
+        Selecciona el contorno más probable de ser la pelota.
+        
+        Rechaza objetos alargados (el palo) usando aspect ratio.
+        La pelota es redonda → aspect ratio cercano a 1.0
+        El palo es largo → aspect ratio >> 1.0 o << 1.0
+        """
         best_detection = None
         best_score = 0.0
 
@@ -60,16 +66,20 @@ class MOG2DetectionStrategy(IDetectionStrategy):
 
             (x, y, w, h) = cv2.boundingRect(contour)
 
-            # Score de circularidad (pelota = circular)
-            aspect_ratio = w / h if h > 0 else 0
-            circularity = 1.0 - abs(1.0 - aspect_ratio)
+            # Filtro duro: rechazar objetos muy alargados (el palo)
+            aspect_ratio = max(w, h) / min(w, h) if min(w, h) > 0 else 10
+            if aspect_ratio > 2.5:
+                continue  # Demasiado alargado → no es pelota
 
-            # Score de compacidad (perímetro vs área)
+            # Score de circularidad (1.0 = cuadrado/circular perfecto)
+            circularity = 1.0 / aspect_ratio  # Más cercano a 1 = más circular
+
+            # Score de compacidad (4πA/P² → 1.0 = círculo perfecto)
             perimeter = cv2.arcLength(contour, True)
             compactness = (4 * np.pi * area) / (perimeter * perimeter) if perimeter > 0 else 0
 
-            # Score combinado
-            score = circularity * 0.4 + compactness * 0.4 + (area / self._config.max_area) * 0.2
+            # Score combinado — prioriza redondez
+            score = circularity * 0.5 + compactness * 0.4 + (area / self._config.max_area) * 0.1
 
             if score > best_score:
                 best_score = score
