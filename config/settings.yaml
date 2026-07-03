@@ -5,9 +5,9 @@
 camera:
   index: 0                    # Índice de la cámara (0 = primera, 1 = segunda)
   backend: "dshow"            # Backend de captura (dshow para PS3 Eye en Windows)
-  width: 320                  # Resolución horizontal
-  height: 240                 # Resolución vertical
-  fps: 120                    # Frames por segundo objetivo
+  width: 640                  # Resolución horizontal (PS3 Eye Universal fuerza 640)
+  height: 480                 # Resolución vertical (PS3 Eye Universal fuerza 480)
+  fps: 30                     # FPS reales con el filtro DirectShow actual
 
 detection:
   # Background Subtractor MOG2

@@ -28,6 +28,7 @@ class BallTracker(ITracker):
         self._shot_positions: list[TrackedPosition] = []
         self._last_shot: ShotData | None = None
         self._idle_count = 0
+        self._last_shot_time = 0.0
 
     def update(self, detection: DetectionResult | None, timestamp: float, frame_index: int) -> TrackingState:
         if detection is None:
@@ -48,6 +49,9 @@ class BallTracker(ITracker):
         # Máquina de estados
         match self._state:
             case TrackingState.IDLE:
+                # Cooldown: no detectar un nuevo shot demasiado pronto
+                if timestamp - self._last_shot_time < self._config.shot_cooldown_sec:
+                    return self._state
                 if movement > self._config.min_movement_px:
                     self._state = TrackingState.MOVING
                     self._shot_positions = [position]
@@ -98,6 +102,7 @@ class BallTracker(ITracker):
             end_time=end_time,
         )
         self._state = TrackingState.SHOT_COMPLETE
+        self._last_shot_time = end_time
 
     def get_shot_data(self) -> ShotData | None:
         return self._last_shot
@@ -111,3 +116,4 @@ class BallTracker(ITracker):
         self._shot_positions = []
         self._last_shot = None
         self._idle_count = 0
+        self._last_shot_time = 0.0

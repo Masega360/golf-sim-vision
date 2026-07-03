@@ -31,6 +31,12 @@ class PS3EyeCamera(ICamera):
         self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self._config.height)
         self._cap.set(cv2.CAP_PROP_FPS, self._config.fps)
 
+        # Verificar qué se configuró realmente
+        real_w = int(self._cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        real_h = int(self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        real_fps = int(self._cap.get(cv2.CAP_PROP_FPS))
+        print(f"✅ Cámara: {real_w}x{real_h} @ {real_fps}fps (pedido: {self._config.width}x{self._config.height}@{self._config.fps})")
+
         self._frame_index = 0
         return True
 
