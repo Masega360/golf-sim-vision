@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Logs y datos temporales
+*.log
+recordings/
+captures/
+
+# Distribución
+dist/
+build/
+*.egg-info/
+
+# Config local (si alguien tiene secrets)
+config/local.yaml
+.env

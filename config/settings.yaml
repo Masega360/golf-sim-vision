@@ -1,0 +1,41 @@
+# ============================================
+# Golf Sim Vision - Configuración
+# ============================================
+
+camera:
+  index: 0                    # Índice de la cámara (0 = primera, 1 = segunda)
+  backend: "dshow"            # Backend de captura (dshow para PS3 Eye en Windows)
+  width: 320                  # Resolución horizontal
+  height: 240                 # Resolución vertical
+  fps: 120                    # Frames por segundo objetivo
+
+detection:
+  # Background Subtractor MOG2
+  mog2_history: 100           # Cantidad de frames que recuerda el modelo de fondo
+  mog2_threshold: 25          # Sensibilidad al cambio (menor = más sensible)
+  detect_shadows: false       # Detectar sombras (false = más rápido)
+  
+  # Filtro de mediana para limpiar ruido
+  median_blur_size: 5         # Tamaño del kernel (debe ser impar)
+  
+  # Filtro de área para contornos
+  min_area: 50                # Área mínima en px² (debajo = ruido)
+  max_area: 1500              # Área máxima en px² (arriba = no es pelota)
+
+tracking:
+  min_movement_px: 10.0       # Píxeles mínimos para considerar que empezó un shot
+  idle_threshold_px: 3.0      # Debajo de esto, se considera quieto
+  max_trail_length: 30        # Posiciones en el trail visual
+  shot_cooldown_sec: 2.0      # Cooldown entre shots
+
+physics:
+  # Calibración (hay que medir esto con tu setup real)
+  pixels_per_cm: 3.0          # Cuántos píxeles equivalen a 1 cm en tu setup
+  min_speed_threshold_ms: 5.0 # Velocidad mínima (m/s) para considerar un shot válido
+  max_tracking_frames: 10     # Máximo de frames a considerar para el cálculo
+
+display:
+  show_mask: true             # Mostrar ventana de máscara de movimiento
+  show_tracking: true         # Mostrar ventana con bounding boxes y trail
+  show_fps: true              # Mostrar contador de FPS
+  window_name: "Golf Sim Vision"
