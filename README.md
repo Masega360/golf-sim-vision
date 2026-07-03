@@ -34,25 +34,79 @@ pip install -r requirements.txt
 
 ## ▶️ Uso
 
+### Para el usuario final (modo kiosco)
+
+**Doble click en `INICIAR SIMULADOR.bat`** — eso es todo.
+
+El sistema:
+1. Arranca fullscreen en el proyector
+2. Si es la primera vez, guía al usuario para calibrar (mostrá el tablero de ajedrez)
+3. Muestra pantalla verde "LISTO" cuando puede recibir tiros
+4. Detecta el tiro automáticamente → muestra velocidad, ángulo y dirección
+5. Vuelve a "LISTO" después de 4 segundos
+
+**Pantallas que ve el usuario:**
+
+| Color | Significado |
+|-------|-------------|
+| 🟢 Verde | "Podés tirar" |
+| 🟡 Amarillo | "Estoy analizando tu tiro..." |
+| ⚪ Datos grandes | Resultado: velocidad, ángulo, dirección |
+| 🔴 Rojo | Problema (muestra teléfono del técnico) |
+
+**Sonidos:**
+- Beep ascendente = "listo para tirar"
+- Beep corto = "detecté tu tiro"
+- Fanfarria = "buen tiro"
+- Beep grave = "problema"
+
+### Para el técnico/developer
+
 ```bash
+# Modo desarrollo (con consola y ventanas de debug)
 python src/main.py
+
+# Calibración manual interactiva
+python -m src.calibration.calibrate
+
+# Modo kiosco (fullscreen, sin consola)
+pythonw launcher.py
 ```
 
-Presioná `q` para cerrar las ventanas de visualización.
+### Auto-arranque (que prenda solo con la PC)
+
+1. Click derecho en `INICIAR SIMULADOR.bat` → "Crear acceso directo"
+2. Mover el acceso directo a:
+   `C:\Users\<usuario>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`
+3. Listo — la próxima vez que prenda la PC arranca solo
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 golf-sim-vision/
+├── INICIAR SIMULADOR.bat     # ← DOBLE CLICK PARA ARRANCAR
+├── launcher.py               # Modo kiosco (fullscreen, sin consola)
 ├── config/
-│   └── settings.yaml        # Parámetros configurables (cámara, detección, física)
+│   ├── settings.yaml         # Parámetros configurables
+│   └── calibration.json      # Se genera automático al calibrar
 ├── src/
-│   ├── camera.py            # Captura de video (PS3 Eye)
-│   ├── tracker.py           # Detección y seguimiento de la pelota
-│   ├── physics.py           # Cálculos de velocidad y ángulo
-│   └── main.py              # Punto de entrada
-├── tests/                   # Tests unitarios
-├── docs/                    # Documentación técnica
+│   ├── ui/                   # Pantallas del proyector
+│   │   ├── renderer.py       # Motor de renderizado fullscreen
+│   │   ├── screens.py        # Pantallas (ready, result, error)
+│   │   └── wizard.py         # Wizard de primer uso
+│   ├── audio/                # Feedback sonoro (winsound)
+│   ├── calibration/          # Calibración con chessboard
+│   ├── interfaces/           # Abstracciones (SOLID)
+│   ├── camera/               # Captura PS3 Eye
+│   ├── detection/            # Detección de pelota (Strategy)
+│   ├── tracking/             # Seguimiento temporal
+│   ├── physics/              # Cálculos de velocidad/ángulo
+│   ├── events/               # Sistema de eventos (Observer)
+│   ├── display/              # Visualización debug (OpenCV)
+│   ├── factory/              # Factory Pattern
+│   ├── pipeline.py           # Pipeline de procesamiento
+│   └── main.py               # Entrada modo developer
+├── tests/                    # Tests unitarios (29 tests)
 ├── requirements.txt
 └── README.md
 ```
